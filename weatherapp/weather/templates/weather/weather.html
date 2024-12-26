@@ -2,33 +2,62 @@
 <html>
 <head>
     <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Weather Information</h1>
+    <h1>Weather in {{ weather.city }}</h1>
+
     <form method="get">
         <input type="text" name="city" placeholder="Enter city" required>
         <button type="submit">Get Weather</button>
     </form>
-    {% if weather.alerts %}
-    <h2>Weather Alerts</h2>
-    <ul>
-        {% for alert in weather.alerts %}
-            <li>{{ alert }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+
     {% if weather %}
-        <h2>{{ weather.city }}</h2>
-        <p>Temperature: {{ weather.temperature }}°C</p>
-        <p>Description: {{ weather.description }}</p>
-    {% endif %}
-    {% if history %}
-    <h2>Search History</h2>
-    <ul>
-        {% for record in history %}
-            <li>{{ record.timestamp }} - {{ record.city }}: {{ record.temperature }}°C, {{ record.description }}</li>
-        {% endfor %}
-    </ul>
+        <div class="card">
+            <h2>Current Weather</h2>
+            <p>Temperature: {{ weather.temperature }}°C</p>
+            <p>Description: {{ weather.description }}</p>
+            <p>Humidity: {{ weather.humidity }}%</p>
+            <p>Pressure: {{ weather.pressure }} hPa</p>
+        </div>
+
+        <div class="card">
+            <h2>3-Day Weather History</h2>
+            {% for record in history %}
+                <p>{{ record.timestamp|date:"Y-m-d" }}: {{ record.temperature }}°C, {{ record.description }}</p>
+            {% empty %}
+                <p>No history available.</p>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <h2>3-Day Forecast</h2>
+            {% for day in forecast %}
+                <p>{{ day.date }}: {{ day.temperature }}°C, {{ day.description }}</p>
+            {% endfor %}
+        </div>
+    {% elif error %}
+        <p>{{ error }}</p>
     {% endif %}
 </body>
 </html>
